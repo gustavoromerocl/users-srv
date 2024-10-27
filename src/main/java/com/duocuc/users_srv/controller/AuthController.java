@@ -25,9 +25,6 @@ public class AuthController {
   private UserService userService;
 
   @Autowired
-  private PasswordEncoder passwordEncoder;
-
-  @Autowired
   private JwtUtils jwtUtils;
 
   // Ruta para iniciar sesión
