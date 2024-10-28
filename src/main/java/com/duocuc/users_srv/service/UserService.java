@@ -24,7 +24,7 @@ public class UserService {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
-  // Método para registrar un usuario con un rol predeterminado (por ejemplo,
+  // Método para registrar un usuario con un rol predeterminado
   public User registerUser(String username, String password, String email) {
     User user = new User();
     user.setUsername(username);
