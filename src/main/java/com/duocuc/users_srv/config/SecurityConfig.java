@@ -1,46 +1,53 @@
 package com.duocuc.users_srv.config;
 
+import com.duocuc.users_srv.security.JwtAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
   private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+  public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+  }
+
   @Bean
-  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     logger.info("Configuring security filter chain for API REST...");
 
     http
-        .csrf(AbstractHttpConfigurer::disable) // Desactivar CSRF, ya que es una API REST
-        .authorizeHttpRequests((requests) -> requests
-            .requestMatchers("/api/auth/**").permitAll() // Permitir acceso público a las rutas de autenticación
-            .requestMatchers("/api/admin/**").hasRole("ADMIN") // Rutas protegidas para usuarios con rol ADMIN
+        .csrf(csrf -> csrf.disable()) // Desactivar CSRF para API REST
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/auth/**").permitAll() // Permitir acceso a las rutas de autenticación
             .anyRequest().authenticated() // Requerir autenticación para el resto de las rutas
         )
-        .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Configurar
-                                                                                                         // el manejo de
-                                                                                                         // sesión sin
-                                                                                                         // estado
-                                                                                                         // (stateless)
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+    // Agregar el filtro JWT antes del UsernamePasswordAuthenticationFilter
+    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     logger.info("Security filter chain configured successfully for API REST.");
     return http.build();
   }
 
   @Bean
-  AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
       throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
