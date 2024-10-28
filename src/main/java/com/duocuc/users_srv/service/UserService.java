@@ -1,5 +1,6 @@
 package com.duocuc.users_srv.service;
 
+import com.duocuc.users_srv.dto.SignUpRequest;
 import com.duocuc.users_srv.model.Role;
 import com.duocuc.users_srv.model.User;
 import com.duocuc.users_srv.repository.RoleRepository;
@@ -52,4 +53,21 @@ public class UserService {
     return userRepository.save(user);
   }
 
+  public void updateUser(Long id, SignUpRequest updateRequest) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    user.setUsername(updateRequest.getUsername());
+    user.setEmail(updateRequest.getEmail());
+    user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+
+    userRepository.save(user);
+  }
+
+  public void deleteUser(Long id) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    userRepository.delete(user);
+  }
 }
