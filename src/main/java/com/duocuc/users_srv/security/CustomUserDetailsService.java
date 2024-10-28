@@ -2,7 +2,6 @@ package com.duocuc.users_srv.security;
 
 import com.duocuc.users_srv.model.User;
 import com.duocuc.users_srv.repository.UserRepository;
-import com.duocuc.users_srv.service.UserService;
 
 import java.util.Set;
 import java.util.stream.Collectors;
