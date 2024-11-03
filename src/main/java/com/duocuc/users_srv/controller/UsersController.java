@@ -1,13 +1,17 @@
 package com.duocuc.users_srv.controller;
 
+import com.duocuc.users_srv.dto.RoleDto;
 import com.duocuc.users_srv.dto.SignUpRequest;
+import com.duocuc.users_srv.dto.UserProfileDto;
 import com.duocuc.users_srv.model.User;
 import com.duocuc.users_srv.service.UserService;
 import com.duocuc.users_srv.util.JwtUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,10 +32,20 @@ public class UsersController {
   public ResponseEntity<?> getAuthenticatedUserProfile(HttpServletRequest request) {
     try {
       String token = jwtUtils.getJwtFromRequest(request);
-      Optional<User> user = userService.getAuthenticatedUser(token);
+      Optional<User> userOpt = userService.getAuthenticatedUser(token);
 
-      if (user.isPresent()) {
-        return ResponseEntity.ok(user.get());
+      if (userOpt.isPresent()) {
+        User user = userOpt.get();
+
+        // Mapear los roles a RoleDto
+        List<RoleDto> roles = user.getRoles().stream()
+            .map(role -> new RoleDto(role.getId(), role.getName()))
+            .collect(Collectors.toList());
+
+        // Crear el UserProfileDto
+        UserProfileDto userProfile = new UserProfileDto(user.getId(), user.getUsername(), roles);
+
+        return ResponseEntity.ok(userProfile);
       } else {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
       }
