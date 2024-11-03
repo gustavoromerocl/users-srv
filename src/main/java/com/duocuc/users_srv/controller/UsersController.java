@@ -1,7 +1,14 @@
 package com.duocuc.users_srv.controller;
 
 import com.duocuc.users_srv.dto.SignUpRequest;
+import com.duocuc.users_srv.model.User;
 import com.duocuc.users_srv.service.UserService;
+import com.duocuc.users_srv.util.JwtUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +20,25 @@ import org.springframework.web.bind.annotation.*;
 public class UsersController {
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private JwtUtils jwtUtils;
+
+  @GetMapping("/profile")
+  public ResponseEntity<?> getAuthenticatedUserProfile(HttpServletRequest request) {
+    try {
+      String token = jwtUtils.getJwtFromRequest(request);
+      Optional<User> user = userService.getAuthenticatedUser(token);
+
+      if (user.isPresent()) {
+        return ResponseEntity.ok(user.get());
+      } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+      }
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user profile");
+    }
+  }
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ROLE_ADMIN')")

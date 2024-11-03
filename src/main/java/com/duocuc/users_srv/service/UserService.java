@@ -5,6 +5,8 @@ import com.duocuc.users_srv.model.Role;
 import com.duocuc.users_srv.model.User;
 import com.duocuc.users_srv.repository.RoleRepository;
 import com.duocuc.users_srv.repository.UserRepository;
+import com.duocuc.users_srv.util.JwtUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class UserService {
 
   @Autowired
   private PasswordEncoder passwordEncoder;
+
+  @Autowired
+  private JwtUtils jwtUtils;
 
   // Método para registrar un usuario con un rol predeterminado
   public User registerUser(String username, String password, String email) {
@@ -69,5 +74,10 @@ public class UserService {
         .orElseThrow(() -> new RuntimeException("User not found"));
 
     userRepository.delete(user);
+  }
+
+  public Optional<User> getAuthenticatedUser(String token) {
+    String username = jwtUtils.getAuthenticatedUsername(token);
+    return userRepository.findByUsername(username); // Busca al usuario en la base de datos
   }
 }

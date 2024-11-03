@@ -65,4 +65,9 @@ public class JwtUtils {
     }
     return null;
   }
+
+  public String getAuthenticatedUsername(String token) {
+    Claims claims = getClaimsFromToken(token);
+    return claims.getSubject(); // Obtener el usuario (generalmente el nombre de usuario) desde las claims
+  }
 }
