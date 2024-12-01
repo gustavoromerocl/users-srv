@@ -1,19 +1,19 @@
 package com.duocuc.users_srv.service;
 
-import com.duocuc.users_srv.dto.SignUpRequest;
-import com.duocuc.users_srv.model.Role;
-import com.duocuc.users_srv.model.User;
-import com.duocuc.users_srv.repository.RoleRepository;
-import com.duocuc.users_srv.repository.UserRepository;
-import com.duocuc.users_srv.util.JwtUtils;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import com.duocuc.users_srv.dto.SignUpRequest;
+import com.duocuc.users_srv.model.Role;
+import com.duocuc.users_srv.model.User;
+import com.duocuc.users_srv.repository.RoleRepository;
+import com.duocuc.users_srv.repository.UserRepository;
+import com.duocuc.users_srv.util.jwt.JwtUtils;
 
 @Service
 public class UserService {
