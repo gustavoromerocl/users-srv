@@ -79,6 +79,6 @@ public class UserService {
 
   public Optional<User> getAuthenticatedUser(String token) {
     String username = jwtUtils.getAuthenticatedUsername(token);
-    return userRepository.findByUsername(username); // Busca al usuario en la base de datos
+    return userRepository.findByEmail(username); // Busca al usuario en la base de datos
   }
 }

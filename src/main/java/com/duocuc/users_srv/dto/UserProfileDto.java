@@ -5,12 +5,14 @@ import java.util.List;
 public class UserProfileDto {
   private Long id;
   private String username;
+  private String email;
   private List<RoleDto> roles;
 
   // Constructor
-  public UserProfileDto(Long id, String username, List<RoleDto> roles) {
+  public UserProfileDto(Long id, String username, String email, List<RoleDto> roles) {
     this.id = id;
     this.username = username;
+    this.email = email;
     this.roles = roles;
   }
 
@@ -29,6 +31,14 @@ public class UserProfileDto {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 
   public List<RoleDto> getRoles() {

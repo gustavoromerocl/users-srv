@@ -38,8 +38,9 @@ public class UsersController {
   public ResponseEntity<?> getAuthenticatedUserProfile(HttpServletRequest request) {
     try {
       String token = jwtUtils.getJwtFromRequest(request);
+      System.err.println(token);
       Optional<User> userOpt = userService.getAuthenticatedUser(token);
-
+      System.err.println(userOpt);
       if (userOpt.isPresent()) {
         User user = userOpt.get();
 
@@ -49,7 +50,7 @@ public class UsersController {
             .collect(Collectors.toList());
 
         // Crear el UserProfileDto
-        UserProfileDto userProfile = new UserProfileDto(user.getId(), user.getUsername(), roles);
+        UserProfileDto userProfile = new UserProfileDto(user.getId(), user.getUsername(), user.getEmail(), roles);
 
         return ResponseEntity.ok(userProfile);
       } else {
