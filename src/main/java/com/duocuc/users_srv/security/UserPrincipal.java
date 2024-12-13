@@ -1,22 +1,23 @@
 package com.duocuc.users_srv.security;
 
-import com.duocuc.users_srv.model.User;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import com.duocuc.users_srv.model.User;
 
 public class UserPrincipal implements UserDetails {
-  private Long id;
-  private String username;
-  private String password;
-  private Collection<? extends GrantedAuthority> authorities;
+  private final Long id;
+  private final String email; // Usar email en lugar de username
+  private final String password;
+  private final Collection<? extends GrantedAuthority> authorities;
 
   public UserPrincipal(User user) {
     this.id = user.getId();
-    this.username = user.getUsername();
+    this.email = user.getEmail(); // Cambiar a email
     this.password = user.getPassword();
     this.authorities = user.getRoles().stream()
         .map(role -> new SimpleGrantedAuthority(role.getName()))
@@ -39,7 +40,7 @@ public class UserPrincipal implements UserDetails {
 
   @Override
   public String getUsername() {
-    return username;
+    return email; // Cambiar a email
   }
 
   @Override

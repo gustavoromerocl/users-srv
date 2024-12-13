@@ -1,6 +1,7 @@
 package com.duocuc.users_srv.service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,6 +30,10 @@ public class UserService {
 
   @Autowired
   private JwtUtils jwtUtils;
+
+  public List<User> getAllUsers() {
+    return userRepository.findAll();
+  }
 
   // Método para registrar un usuario con un rol predeterminado
   public User registerUser(String username, String password, String email) {
@@ -74,11 +79,16 @@ public class UserService {
     User user = userRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("User not found"));
 
+    // Eliminar las asociaciones entre el usuario y los roles
+    user.getRoles().clear();
+    userRepository.save(user);
+
+    // Ahora elimina el usuario
     userRepository.delete(user);
   }
 
   public Optional<User> getAuthenticatedUser(String token) {
     String username = jwtUtils.getAuthenticatedUsername(token);
-    return userRepository.findByUsername(username); // Busca al usuario en la base de datos
+    return userRepository.findByEmail(username); // Busca al usuario en la base de datos
   }
 }

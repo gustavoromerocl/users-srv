@@ -1,5 +1,7 @@
 package com.duocuc.users_srv.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,7 +37,7 @@ public class AuthController {
   public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
-            loginRequest.getUsername(),
+            loginRequest.getEmail(), // Cambiar a email
             loginRequest.getPassword()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -49,9 +51,10 @@ public class AuthController {
   public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
     // Verificar si el nombre de usuario ya está en uso
     if (userService.existsByUsername(signUpRequest.getUsername())) {
-      return ResponseEntity
-          .badRequest()
-          .body("Error: Username is already taken!");
+      return ResponseEntity.badRequest().body(
+          Map.of(
+              "status", "error",
+              "message", "Username is already taken!"));
     }
 
     // Registrar el nuevo usuario usando el método registerUser de UserService
@@ -60,6 +63,9 @@ public class AuthController {
         signUpRequest.getPassword(),
         signUpRequest.getEmail());
 
-    return ResponseEntity.ok("User registered successfully!");
+    return ResponseEntity.ok(
+        Map.of(
+            "status", "success",
+            "message", "User registered successfully!"));
   }
 }
