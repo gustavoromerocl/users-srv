@@ -4,6 +4,10 @@ public class LoginRequest {
   private String password;
   private String email;
 
+  // Constructor sin argumentos
+  public LoginRequest() {
+  }
+
   // Getters y Setters
   public String getPassword() {
     return password;

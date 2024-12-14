@@ -28,6 +28,10 @@ public class UserPrincipal implements UserDetails {
     return new UserPrincipal(user);
   }
 
+  public Long getId() {
+    return id;
+  }
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return authorities;
