@@ -23,6 +23,10 @@ public class JwtUtils {
   @Autowired
   private JwtConfig jwtConfig;
 
+  public void setJwtConfig(JwtConfig jwtConfig) {
+    this.jwtConfig = jwtConfig;
+  }
+
   // Método para obtener la clave secreta en formato Key
   private Key getSigningKey() {
     byte[] keyBytes = Base64.getDecoder().decode(jwtConfig.getSecret());
